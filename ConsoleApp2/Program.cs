@@ -14,7 +14,7 @@ namespace ConsoleApp2
             var summary = BenchmarkRunner.Run<TestClass>();
             /*var testClass = new TestClass();
             testClass.SetUp();
-            var list = testClass.Run("вотка");
+            var list = testClass.Run("добычч");
             foreach (var s in list)
             {
                 Console.WriteLine(s);

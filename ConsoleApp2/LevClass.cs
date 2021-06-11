@@ -7,12 +7,14 @@ namespace ConsoleApp2
 {
     public class LevClass
     {
-        public static IEnumerable<string> GetPrediction(string word, IEnumerable<string> collection)
+        public static IEnumerable<string> GetPrediction(string word, IEnumerable<string> collection, bool isDem = false)
         {
             var result = new List<(int, string)>();
             foreach (var distWord in collection)
             {
-                var levDistance = LevDistance(word, distWord);
+                var levDistance = 0;
+                levDistance = isDem ? DLevDistance(word, distWord) : LevDistance(word, distWord);
+
                 if (result.Count < 5)
                 {
                     result.Add((levDistance, distWord));
@@ -57,12 +59,12 @@ namespace ConsoleApp2
             int diff;
             var m = new int[firstWord.Length + 1, secondWord.Length + 1];
 
-            for (var i = 0; i < firstWord.Length - 1; i++)
+            for (var i = 0; i < firstWord.Length + 1; i++)
             {
                 m[i, 0] = i;
             }
 
-            for (var j = 0; j < secondWord.Length - 1; j++)
+            for (var j = 0; j < secondWord.Length + 1; j++)
             {
                 m[0, j] = j;
             }
@@ -74,6 +76,39 @@ namespace ConsoleApp2
                     diff = firstWord[i - 1] == secondWord[j - 1] ? 0 : 1;
 
                     m[i, j] = Math.Min(Math.Min(m[i - 1, j] + 1, m[i, j - 1] + 1), m[i - 1, j - 1] + diff);
+                }
+            }
+
+            return m[firstWord.Length, secondWord.Length];
+        }
+
+        private static int DLevDistance(string firstWord, string secondWord)
+        {
+            int diff;
+            var m = new int[firstWord.Length + 1, secondWord.Length + 1];
+
+            for (var i = 0; i < firstWord.Length + 1; i++)
+            {
+                m[i, 0] = i;
+            }
+
+            for (var j = 0; j < secondWord.Length + 1; j++)
+            {
+                m[0, j] = j;
+            }
+
+            for (var i = 1; i <= firstWord.Length; i++)
+            {
+                for (var j = 1; j <= secondWord.Length; j++)
+                {
+                    diff = firstWord[i - 1] == secondWord[j - 1] ? 0 : 1;
+
+                    m[i, j] = Math.Min(Math.Min(m[i - 1, j] + 1, m[i, j - 1] + 1), m[i - 1, j - 1] + diff);
+                    if (i > 1 && j > 1 && firstWord[i - 1] == secondWord[j - 2] &&
+                        firstWord[i - 2] == secondWord[j - 1])
+                    {
+                        m[i, j] = Math.Min(m[i, j], m[i - 2, j - 2] + diff);
+                    }
                 }
             }
 

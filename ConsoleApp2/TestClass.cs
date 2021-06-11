@@ -68,17 +68,17 @@ namespace ConsoleApp2
         [Benchmark]
         public List<string> Test() => Run(ParamWord);
        
-        public  List<string> Run(string word) =>
+        public  List<string> Run(string word, bool isDem = false) =>
         
-            Run(word, _hashSet, _littleHash, _dictionary).ToList();
+            Run(word, _hashSet, _littleHash, _dictionary, isDem).ToList();
         
         public IEnumerable<string> Run(string word, HashSet<string> bigHash, HashSet<string> littleHash,
-            Dictionary<string, Dictionary<int, List<string>>> dictionary)
+            Dictionary<string, Dictionary<int, List<string>>> dictionary, bool isDem = false)
         {
             return bigHash.TryGetValue(word, out var targetWord)
                 ? targetWord.ToOneEnum()
                 : LevClass.GetPrediction(word,
-                    word != null && word.Length < 3 ? littleHash : Trigramm.GetWords(word, dictionary));
+                    word != null && word.Length < 3 ? littleHash : Trigramm.GetWords(word, dictionary), isDem);
         }
     }
 }
